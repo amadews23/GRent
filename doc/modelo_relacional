@@ -1,0 +1,31 @@
+VIDEOJUEGO (IdVideojuego, nombre, descripcion, IdGenero, precio_alquiler) 
+--> PRIMARY KEY: IdVideojuego
+--> FOREIGN KEY: IdGenero
+
+*descripción puede incluir información no atómica como fecha de lanzamiento.
+
+GENERO (IdGenero, nombre)
+--> PRIMARY KEY: IdGenero
+
+UNIDAD (IdUnidad, IdVideojuego, IdCompra, precio_coste)
+--> PRIMARY KEY: IdUnidad
+--> FOREIGN KEY: IdVideojuego
+--> FOREIGN KEY: IdCompra 
+
+Alquila (IdAlquiler, fecha_salida, fecha_devolucion, IdUnidad, IdCliente)
+
+--> PRIMARY KEY: IdAlquiler
+--> FOREIGN KEY: IdUnidad
+--> FOREIGN KEY: IdCliente
+NOTA: PRIMARY KEY: Fecha_salida+IdUnidad? No es válida como clave primaria, se podría dar el caso que es devuelto el
+mismo día que es alquilado y se vuelve a alquilar, creando así una duplicidad o el sistema no permitir que vuelva a
+ser alquilado ya que generea una clave duplicada.
+
+CLIENTE(IdCliente, nombre, apellido1, apellido2, domicilio, cp, ciudad, telefono1, telefono2, email, observaciones)
+--> PRIMARY KEY: IdCliente
+
+PROVEEDOR(IdProveedor, nombre, domicilio, telefono, telefono2, email, observaciones)
+--> PRIMARY KEY: IdProveedor
+
+Compra(IdCompra, fecha, IdProveedor)
+--> PRIMARY KEY: IdCompra

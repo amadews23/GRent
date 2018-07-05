@@ -2,7 +2,6 @@ VIDEOJUEGO (IdVideojuego, nombre, descripcion, IdGenero, precio_alquiler)
 --> PRIMARY KEY: IdVideojuego
 --> FOREIGN KEY: IdGenero
 
-
 GENERO (IdGenero, nombre)
 --> PRIMARY KEY: IdGenero
 

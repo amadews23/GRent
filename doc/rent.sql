@@ -47,12 +47,17 @@ CREATE TABLE "UNIDAD" (
       FOREIGN KEY ("IdVideojuego") REFERENCES videojuego("IdVideojuego") ON UPDATE  CASCADE ON DELETE SET NULL,
       FOREIGN KEY ("IdCompra") REFERENCES compra("IdCompra") ON UPDATE  CASCADE ON DELETE SET NULL
 );
-CREATE TABLE "alquila" (
+CREATE TABLE "ALQUILA" (
     "IdAlquiler" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
     "fecha_salida" INTEGER NOT NULL,
-    "fecha_devolucion" INTEGER ,
-     "IdUnidad" INTEGER NOT NULL,
+    "fecha_adevolver" INTEGER NOT NULL,
+    "fecha_devolucion" INTEGER DEFAULT NULL,
+    "importe_pagado" FLOAT, 
+    "importe_debido" FLOAT,
+    "pagado" INTEGER DEFAULT NULL,
+    "IdUnidad" INTEGER NOT NULL,
     "IdCliente" INTEGER NOT NULL,
       FOREIGN KEY ("IdUnidad") REFERENCES unidad("IdUnidad") ON UPDATE  CASCADE ON DELETE SET NULL,
       FOREIGN KEY ("IdCliente") REFERENCES cliente("IdCliente") ON UPDATE  CASCADE ON DELETE SET NULL
-);
+)
+

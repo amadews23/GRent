@@ -48,9 +48,9 @@ int main() {
 		}
 
 	} while ( g_strcmp0 (tecla, "5") != 0 );
-		/*Liberamos variable dinamica*/
-		g_free(TipoDePersona);
-		g_free(tecla);
-		g_printf("Adews...\n");
+	/*Liberamos variable dinamica*/
+	g_free(TipoDePersona);
+	g_free(tecla);
+	g_printf("Adews...\n");
 }
 

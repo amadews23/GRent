@@ -10,7 +10,6 @@
 * Funcion main
 *
 */
-#include <stdlib.h>
 #include "model.h"
 #include "cuestiones.h"
 #include <stdio.h>

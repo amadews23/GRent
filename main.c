@@ -22,26 +22,18 @@ int main() {
 	//mostrar --help ... 
 	gchar *tecla; //tecla sera un string para evitar que al insertar demasiados caracteres desborde
 	gchar *TipoDePersona;
-
 	TipoDePersona = g_malloc(10);
-
 	tipo_vectorpersona vectorpersona;
 
+	//TODO void Inicializar vectorpersona
 	for (int a=0; a < 12 ; a++) {
 		vectorpersona[a] = FALSE;
-
-
 	}
-	//vectorpersona[0] = TRUE;
-	//vectorpersona[1] = TRUE;
 	vectorpersona[1] = TRUE;
-	//vectorpersona[2] = TRUE;
 	vectorpersona[4] = TRUE;
-	//vectorpersona[6] = TRUE;
-
 
 	tecla = g_malloc(3);
-	//tmp = g_malloc(3);
+
 	if (ConectarBd(BASEDATOS) == FALSE) {
 		return -1;
 	}
@@ -58,46 +50,26 @@ int main() {
 
 		g_printf("7-Para SALIR\n");
 
-		//fgets (&tecla, 3, stdin);
 		fgets(tecla, 4, stdin);
-		//fgets(TextoReducido(1, tecla), 3, stdin);
-	//	fflush(stdin);
 
 		LimpiarTexto(tecla);
 
-		//g_stpcpy(TipoDePersona, TextoReducido(1, tecla));
-		//ReducirTexto0(1, tecla);
-		//LimpiarTexto(tecla);
-		//g_printf("TECLA:%c",TextoReducido(tecla));
-		//g_printf("Es la tecla %s\n",tecla);
-//		g_stpcpy (tmp,TextoReducido(tecla));
-				//g_stpcpy (tmp,tecla);
-		//tmp = TextoReducido(tecla);
-		//g_strndup (tecla, 2);
-//g_printf("Es la tecla %s\n",tecla);
-//g_printf("Es la tecla %s\n",tecla);
-
-//g_printf("el tamanyo del string es %d\n", (guint)strlen(tecla));
 		if ((g_strcmp0 (tecla, "1")) == 0) {
-		//if (tecla == '1') {
 			//g_printf("\033c");
 			g_stpcpy(TipoDePersona, "CLIENTE");
 			CrearPersona(TipoDePersona);
 		}
 		if ((g_strcmp0 (tecla, "2")) == 0) {
-		//if (tecla == '1') {
 			//g_printf("\033c");
 			g_stpcpy(TipoDePersona, "CLIENTE");
 			MostrarPersonas(TipoDePersona, vectorpersona);
 		}
 		if ((g_strcmp0 (tecla, "4")) == 0) {
- 		//if (tecla == '2') {
  			//g_printf("\033c");
 			g_stpcpy(TipoDePersona, "PROVEEDOR");
 			CrearPersona(TipoDePersona);
 		}
 		if ((g_strcmp0 (tecla, "5")) == 0) {
-		//if (tecla == '1') {
 			//g_printf("\033c");
 			g_stpcpy(TipoDePersona, "PROVEEDOR");
 			MostrarPersonas(TipoDePersona, vectorpersona);

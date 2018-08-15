@@ -31,21 +31,6 @@ typedef struct {
 	gchar *TipoDePersona; //PROVEEDOR o CLIENTE
 } tipo_persona;
 
-/*En este vector abierto copiaremos todos las filas de la tabla*/
-//typedef tipo_persona tipo_vectorpersonas[];
-//typedef struct {
-//	gchar *tcnif;
-//	gchar *tnombre1;
-//	gchar *tnombre2;
-//	gchar *tdomicilio;
-//	gchar *tcpl; //le anyado una l para que no se parezca el nombre al protocolo tcp, por si acaso!
-//	gchar *tciudad;
-//	gchar *ttelefono2;
-//	gchar *temail;
-//	gchar *tobservaciones;
-	//gchar *tTipoDePersona; //PROVEEDOR o CLIENTE
-//} tipo_camposPersona;
-
 /*Este vector lleva marcado los campos de la tabla que seran marcos en el SELECT de personas (clientes o proveedores)
 El orden es: Idproveedor/Idcliente, cnif, nombre1, nombre2, domicilio, cp, ciudad, telefono1, telefono2, email, observaciones*/
 typedef gboolean tipo_vectorpersona[11];
@@ -60,12 +45,10 @@ gboolean ConectarBd(const gchar *bd_nombre);
 void CrearPersona(gchar *TipoDePersona);
 /*--Inserta los valores en la tabla proveedor o en la tabla cliente recogidos previamente --*/
 void InsertarPersona(tipo_persona persona);
-
 /*--Procedimiento para mostrar personas--*/
 void MostrarPersonas(gchar *TipoDePersona, tipo_vectorpersona vectorpersona);
 
-
-//
+//TODO
 guint CrearCompra(guint fecha, guint Idproveedor);
 //int CrearCompra(int fecha, int Idproveedor);
 //El IdCompra es obtenido despues de ejecutar CrearCompra(...);

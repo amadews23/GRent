@@ -14,5 +14,21 @@
 #pragma once
 #include <glib.h>
 
-/*Eliminamos los /n del fgets*/
+//Eliminamos los /n del fgets
 void LimpiarTexto(gchar *cadena);
+
+void MensageError(void);
+
+char TextoReducido0( gchar *cadena);
+
+
+
+
+void ReducirTexto(guint n, gchar *cadena);
+//TODO ¿? o
+//void EliminarLetras(gchar *cadena);
+// o
+//void EliminarLetras(GString cadena);
+// char TextoReducido(guint n, gchar *cadena);
+
+

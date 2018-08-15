@@ -11,7 +11,14 @@
 * Archivo: cuestiones.c
 *
 */
+
+//#include <stdio.h>
 #include <string.h>
+//#include <stdlib.h>
+//#include <glib.h>
+#include <glib/gprintf.h>
+//#include <glib/gstdio.h> //para usar g_access
+//#include <unistd.h> //para usar la funcion access que comprueba si un archivo existe
 #include "cuestiones.h"
 
 void LimpiarTexto(gchar *cadena) {
@@ -21,3 +28,21 @@ void LimpiarTexto(gchar *cadena) {
 		*p = '\0';
 	}
 }
+void MensageError(void) {
+		g_fprintf(stdout,"GRent Error: ");
+}
+
+/* char TextoReducido al primer miembro del string {*/
+ char TextoReducido0(gchar *cadena) {
+	//LimpiarTexto(cadena);
+	//g_printf("Esta es la cadena: %c\n", cadena[0]);
+	return cadena[0];
+}
+
+
+void ReducirTexto(guint n, gchar *cadena) {
+	for (int i = 0 ; i < strlen(cadena); i++) {
+		g_printf("Estos son los caracteres %c\n", cadena[i]);
+	}
+}
+

@@ -11,6 +11,7 @@
 * Archivo: model.c
 *
 */
+//#include <stdio.h>
 #include <sqlite3.h>
 #include "model.h"
 #include "cuestiones.h"
@@ -20,9 +21,16 @@
 #include <glib/gprintf.h>
 #include <glib/gstdio.h> //para usar g_access
 
+//#include <unistd.h> //para usar la funcion access que comprueba si un archivo existe
+
+//#include <string.h>
+
 gboolean ExisteBd(const gchar *bd_nombre) {
 	if( g_access( bd_nombre, 0 ) == -1 ) {
 		//F_OK vale 0 por lo tanto en g_access para no tener que cargar unistd.h pondremos directamente 0
+		//if( access( bd_nombre, F_OK ) != -1 ) {
+		// file doesn't exist
+		//al provocar la salida del programa NO nos creara el archivo de la base de datos vacio
 		return TRUE;
 	} else {
 		return FALSE;
@@ -40,12 +48,15 @@ gboolean ConsultaOk(guint resultado_consulta) {
 
 gboolean ConectarBd(const gchar *bd_nombre) {
 	//puntero a la base de datos
+	//?LIBERAR
 	sqlite3 *db;
+	//PENDIENTE sqlite3_stmt *res;
 	gboolean resultado_consulta ;
 
-	g_fprintf(stdout,"GRent: ");
+	//g_fprintf(stdout,"GRent: ");
 	//comprobamos que el archivo con el nombre dado (bd_nombre) existe
 	if (ExisteBd(bd_nombre)  == TRUE ) {
+		MensageError();
 		g_print ("La base de datos %s no existe\n",bd_nombre);
 		return FALSE;
 	}
@@ -54,6 +65,7 @@ gboolean ConectarBd(const gchar *bd_nombre) {
 		g_print ("OK %d\n", resultado_consulta);
 		return TRUE;
 	} else {
+		MensageError();
 		g_print ("SQL error: %d\n", resultado_consulta);
 		return FALSE;	
 	}
@@ -80,6 +92,7 @@ void CrearPersona(gchar *TipoDePersona) {
 
 	/*TipoDePersona es un CLIENTE o un PROVEEDOR*/
 	persona.TipoDePersona = TipoDePersona;
+	//g_stpcpy(persona.TipoDePersona, TipoDePersona);
 
 	if (( g_strcmp0 (persona.TipoDePersona, "PROVEEDOR")) == 0) {
 		g_stpcpy(tipoDeNombre1, "Nombre comercial");
@@ -91,6 +104,7 @@ void CrearPersona(gchar *TipoDePersona) {
 		g_stpcpy(tipoDeNombre2,"Apellidos");
 	}
 	
+	//g_fprintf(stdout,"Introduce:-> ");
 	g_print ("Introduce los datos para un nuevo %s\n", persona.TipoDePersona);
 
 	do {
@@ -137,6 +151,8 @@ void CrearPersona(gchar *TipoDePersona) {
 
 	/*Aunque telefono se guarde como TEXT en la BD 
 	hasta la hora de insertar sera usado como integer*/
+
+	/*TODO crear funcion que detecte letras en la entrada del tel y las elimine antes de convertir a int*/
 	do {
 		g_printf ("Telefono: \n");
 		fgets (temp, 12, stdin);
@@ -185,9 +201,9 @@ void CrearPersona(gchar *TipoDePersona) {
 	fgets (temp, 100, stdin);
 	//g_printf("\033c"); //Comentado por ahora
 
-	/*<------Aqui inserta los datos en la BD---->*/
+	/*<------Aqui Insertar los datos en la BD---->*/
 	InsertarPersona(persona);
-	/*<------fin insestar----------------------->*/
+	/*<------FIN Insertar----------------------->*/
 
 	/*Liberamos las variables dinamicas*/
 	g_free(temp);
@@ -239,33 +255,182 @@ void InsertarPersona(tipo_persona persona) {
 	g_string_append (consulta, persona.observaciones->str);
 	g_string_append (consulta, "') ;");
 
-	g_printf("%s\n",consulta->str);
+	/*g_printf("%s\n",consulta->str);*/ //Para ver la consulta que realizarA
 
     sqlite3 *db;
     gchar *err_msg = 0;  
-    gint rc = sqlite3_open("rent.db", &db);
+    gint rc = sqlite3_open(BASEDATOS, &db);
     
     if (rc != SQLITE_OK) {
         
         fprintf(stderr, "Cannot open database: %s\n", sqlite3_errmsg(db));
         sqlite3_close(db);
+     
     }
-
     rc = sqlite3_exec(db, consulta->str, 0, 0, &err_msg);
     
     if (rc != SQLITE_OK ) {
         
         fprintf(stderr, "SQL error: %s\n", err_msg);
-        
+       	MensageError();
+		g_printf("(code:%d)\n ", rc);
+
+        if (rc == 19) {
+        	g_printf("El NIF o CIF estA duplicado (code:%d)\n ", rc);
+        }
         sqlite3_free(err_msg);        
         sqlite3_close(db);
-
     } 
-    
     sqlite3_close(db);
-    //Liberamos variables dinamicas
+    /*Liberamos variables dinamicas*/
     g_free(temp);
     g_free(tipoDeConsulta);
     g_string_free(consulta, TRUE);
-
 }
+
+void MostrarPersonas(gchar *TipoDePersona, tipo_vectorpersona vectorpersona ) {
+	gchar *tipoDeConsulta;
+	//gchar *temp;
+	GString *consulta;
+    guint maxpos = 0; //usada para definir la posicion del campo a
+    guint b = 0;
+	tipoDeConsulta = g_malloc(8);
+	//temp = g_malloc(14);
+    sqlite3 *db;
+    sqlite3_stmt *res;
+    gchar *err_msg = 0;  
+    gint rc = sqlite3_open(BASEDATOS, &db);
+
+	g_stpcpy(tipoDeConsulta, "SELECT ");
+	consulta = g_string_new (tipoDeConsulta);
+
+	if (vectorpersona[0] == TRUE ) { 
+		if ( g_strcmp0 (TipoDePersona, "CLIENTE") == 0 ) 	{
+			g_string_append (consulta, "IdCliente");
+		}
+		if ( g_strcmp0 (TipoDePersona, "PROVEEDOR") == 0 ) 	{
+			g_string_append (consulta, "IdProveedor");	
+		}
+	}
+ 
+ 	if (vectorpersona[1] == TRUE) {
+ 		if (vectorpersona[0] == TRUE) {
+ 			g_string_append (consulta, ",");	
+ 		} 
+ 		g_string_append (consulta, " cnif");
+ 	}
+		
+ 	if (vectorpersona[2] == TRUE) {
+ 		if (vectorpersona[1] == TRUE || vectorpersona[0] == TRUE) {
+ 			g_string_append (consulta, ",");	
+ 		} 
+ 		g_string_append (consulta, " nombre1");
+ 	}
+	
+ 	if (vectorpersona[3] == TRUE) {
+ 		if (vectorpersona[2] == TRUE || vectorpersona[1] == TRUE || vectorpersona[0] == TRUE ) {
+ 			g_string_append (consulta, ",");	
+ 		} 
+ 		g_string_append (consulta, " nombre2");
+ 	}
+
+ 	if (vectorpersona[4] == TRUE) {
+ 		if (vectorpersona[3] == TRUE || vectorpersona[2] == TRUE || vectorpersona[1] == TRUE || vectorpersona[0] == TRUE ) {
+ 			g_string_append (consulta, ",");	
+ 		} 
+ 		g_string_append (consulta, " domicilio");
+ 	}
+
+ 	if (vectorpersona[5] == TRUE) {
+ 		if (vectorpersona[4] == TRUE || vectorpersona[3] == TRUE || vectorpersona[2] == TRUE || vectorpersona[1] == TRUE || vectorpersona[0] == TRUE ) {
+ 			g_string_append (consulta, ",");	
+ 		} 
+ 		g_string_append (consulta, " cp");
+ 	}
+
+ 	if (vectorpersona[6] == TRUE) {
+ 		if (vectorpersona[5] == TRUE || vectorpersona[4] == TRUE || vectorpersona[3] == TRUE || vectorpersona[2] == TRUE || vectorpersona[1] == TRUE || vectorpersona[0] == TRUE ) {
+ 			g_string_append (consulta, ",");	
+ 		} 
+ 		g_string_append (consulta, " ciudad");
+ 	}
+
+ 	if (vectorpersona[7] == TRUE) {
+ 		if (vectorpersona[6] == TRUE || vectorpersona[5] == TRUE || vectorpersona[4] == TRUE || vectorpersona[3] == TRUE || vectorpersona[2] == TRUE || vectorpersona[1] == TRUE || vectorpersona[0] == TRUE ) {
+ 			g_string_append (consulta, ",");	
+ 		} 
+ 		g_string_append (consulta, " telefono1");
+ 	}
+
+ 	if (vectorpersona[8] == TRUE) {
+ 		if (vectorpersona[7] == TRUE || vectorpersona[6] == TRUE || vectorpersona[5] == TRUE || vectorpersona[4] == TRUE || vectorpersona[3] == TRUE || vectorpersona[2] == TRUE || vectorpersona[1] == TRUE || vectorpersona[0] == TRUE ) {
+ 			g_string_append (consulta, ",");	
+ 		} 
+ 		g_string_append (consulta, " telefono2");
+ 	}
+
+ 	if (vectorpersona[9] == TRUE) {
+ 		if (vectorpersona[8] == TRUE || vectorpersona[7] == TRUE || vectorpersona[6] == TRUE || vectorpersona[5] == TRUE || vectorpersona[4] == TRUE || vectorpersona[3] == TRUE || vectorpersona[2] == TRUE || vectorpersona[1] == TRUE || vectorpersona[0] == TRUE ) {
+ 			g_string_append (consulta, ",");	
+ 		} 
+ 		g_string_append (consulta, " email");
+ 	}
+
+ 	if (vectorpersona[10] == TRUE) {
+ 		if (vectorpersona[9] == TRUE || vectorpersona[8] == TRUE || vectorpersona[7] == TRUE || vectorpersona[6] == TRUE || vectorpersona[5] == TRUE || vectorpersona[4] == TRUE || vectorpersona[3] == TRUE || vectorpersona[2] == TRUE || vectorpersona[1] == TRUE || vectorpersona[0] == TRUE ) {
+ 			g_string_append (consulta, ",");	
+ 		} 
+ 		g_string_append (consulta, " observaciones");
+ 	}
+
+	g_string_append (consulta, " FROM ");
+	g_string_append (consulta, TipoDePersona);
+	g_string_append (consulta, ";");
+
+	g_printf("%s\n",consulta->str); //Para ver la consulta que se ejecuta
+
+    
+    if (rc != SQLITE_OK) {
+        
+        fprintf(stderr, "Cannot open database: %s\n", sqlite3_errmsg(db));
+        sqlite3_close(db);
+	    //  return 1;
+    }
+
+    rc = sqlite3_prepare_v2(db, consulta->str, -1, &res, 0);
+    if (rc != SQLITE_OK ) {
+        
+        fprintf(stderr, "SQL error: %s\n", err_msg);
+       	MensageError();
+		g_printf("(code:%d)\n ", rc);
+        sqlite3_free(err_msg);        
+        sqlite3_close(db);
+        //  return 1;
+    } 
+    
+    for (int a=0; a < 11; a++) {
+    	if (vectorpersona[a] == TRUE) {
+    		maxpos++;
+    	} 
+    }
+    while (sqlite3_step (res) == SQLITE_ROW) {
+    	for (int a=0 ; a < 11; a++) {
+        	if (vectorpersona[a] == TRUE) {
+        		b = 0;
+        		while(b < maxpos) {
+        			g_printf(" %s: ", sqlite3_column_text(res, b));
+        			b++;
+        		} 
+        	break;       		
+    		}
+    	}	
+		g_printf("\n");
+	} 
+
+    sqlite3_finalize(res);
+    sqlite3_close(db);
+	g_free(tipoDeConsulta);
+	g_string_free(consulta, TRUE);
+ 	}
+	//cnif, nombre1, nombre2, domicilio, cp, ciudad, telefono1, telefono2, email, observaciones
+

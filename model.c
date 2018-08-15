@@ -400,7 +400,7 @@ void MostrarPersonas(gchar *TipoDePersona, tipo_vectorpersona vectorpersona ) {
         		if (vectorpersona[a] == TRUE) {
         			b = 0;
         			while(b < maxpos) {
-        				g_printf(" %s: ", sqlite3_column_text(res, b));
+        				g_printf(" %s ", sqlite3_column_text(res, b));
         				b++;
         			} 
         			break;       		

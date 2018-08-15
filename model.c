@@ -245,35 +245,30 @@ void InsertarPersona(tipo_persona persona) {
 
 	/*g_printf("%s\n",consulta->str);*/ //Para ver la consulta que realizarA
 
-    sqlite3 *db;
-    gchar *err_msg = 0;  
-    gint rc = sqlite3_open(BASEDATOS, &db);
+	sqlite3 *db;
+    	gchar *err_msg = 0;  
+    	gint rc = sqlite3_open(BASEDATOS, &db);
     
-    if (rc != SQLITE_OK) {
-        
-        fprintf(stderr, "Cannot open database: %s\n", sqlite3_errmsg(db));
-        sqlite3_close(db);
-     
-    }
-    rc = sqlite3_exec(db, consulta->str, 0, 0, &err_msg);
-    
-    if (rc != SQLITE_OK ) {
-        
-        fprintf(stderr, "SQL error: %s\n", err_msg);
-       	MensageError();
+    	if (rc != SQLITE_OK) {
+                fprintf(stderr, "Cannot open database: %s\n", sqlite3_errmsg(db));
+        	sqlite3_close(db);
+	}
+    	rc = sqlite3_exec(db, consulta->str, 0, 0, &err_msg);
+    	if (rc != SQLITE_OK ) {
+                fprintf(stderr, "SQL error: %s\n", err_msg);
+       		MensageError();
 		g_printf("(code:%d)\n ", rc);
-
-        if (rc == 19) {
-        	g_printf("El NIF o CIF estA duplicado (code:%d)\n ", rc);
-        }
-        sqlite3_free(err_msg);        
-        sqlite3_close(db);
-    } 
-    sqlite3_close(db);
-    /*Liberamos variables dinamicas*/
-    g_free(temp);
-    g_free(tipoDeConsulta);
-    g_string_free(consulta, TRUE);
+        	if (rc == 19) {
+        		g_printf("El NIF o CIF estA duplicado (code:%d)\n ", rc);
+        	}
+        	sqlite3_free(err_msg);        
+        	sqlite3_close(db);
+    	} 
+    	sqlite3_close(db);
+    	/*Liberamos variables dinamicas*/
+    	g_free(temp);
+    	g_free(tipoDeConsulta);
+    	g_string_free(consulta, TRUE);
 }
 
 void MostrarPersonas(gchar *TipoDePersona, tipo_vectorpersona vectorpersona ) {

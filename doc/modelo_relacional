@@ -2,6 +2,8 @@ VIDEOJUEGO (IdVideojuego, nombre, descripcion, IdGenero, precio_alquiler)
 --> PRIMARY KEY: IdVideojuego
 --> FOREIGN KEY: IdGenero
 
+*descripción puede incluir información no atómica como fecha de lanzamiento.
+
 GENERO (IdGenero, nombre)
 --> PRIMARY KEY: IdGenero
 
@@ -16,14 +18,11 @@ Alquila (IdAlquiler, fecha_salida, fecha_adevolver, fecha_devolucion, importe_pa
 --> FOREIGN KEY: IdUnidad
 --> FOREIGN KEY: IdCliente
 
-CLIENTE(IdCliente, nombre, apellido1, apellido2, domicilio, cp, ciudad, telefono1, telefono2, email, observaciones)
+CLIENTE(IdCliente, nombre1, nombre2, apellido2, domicilio, cp, ciudad, telefono1, telefono2, email, observaciones)
 --> PRIMARY KEY: IdCliente
 
-PROVEEDOR(IdProveedor, nombre, domicilio, telefono, telefono2, email, observaciones)
+PROVEEDOR(IdProveedor, nombre1, nombre2, domicilio, cp, ciudad, telefono1, telefono2, email, observaciones)
 --> PRIMARY KEY: IdProveedor
 
 Compra(IdCompra, fecha, IdProveedor)
 --> PRIMARY KEY: IdCompra
-
-
-*en VIDEOJUEGO(descripción) puede incluir información no atómica como fecha de lanzamiento.

@@ -18,7 +18,7 @@ Alquila (IdAlquiler, fecha_salida, fecha_adevolver, fecha_devolucion, importe_pa
 --> FOREIGN KEY: IdUnidad
 --> FOREIGN KEY: IdCliente
 
-CLIENTE(IdCliente, nombre1, nombre2, apellido2, domicilio, cp, ciudad, telefono1, telefono2, email, observaciones)
+CLIENTE(IdCliente, nombre1, nombre2, domicilio, cp, ciudad, telefono1, telefono2, email, observaciones)
 --> PRIMARY KEY: IdCliente
 
 PROVEEDOR(IdProveedor, nombre1, nombre2, domicilio, cp, ciudad, telefono1, telefono2, email, observaciones)

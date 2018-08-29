@@ -21,10 +21,6 @@ void MensageError(void);
 
 char TextoReducido0( gchar *cadena);
 
-
-
-
-void ReducirTexto(guint n, gchar *cadena);
 //TODO ¿? o
 //void EliminarLetras(gchar *cadena);
 // o

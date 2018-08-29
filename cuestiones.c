@@ -40,9 +40,4 @@ void MensageError(void) {
 }
 
 
-void ReducirTexto(guint n, gchar *cadena) {
-	for (int i = 0 ; i < strlen(cadena); i++) {
-		g_printf("Estos son los caracteres %c\n", cadena[i]);
-	}
-}
 

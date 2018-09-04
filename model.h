@@ -44,8 +44,9 @@ typedef struct {
 	gchar *TipoDePersona; //PROVEEDOR o CLIENTE
 } tipo_persona;
 
-/*Este vector lleva marcado los campos de la tabla que seran campos en el SELECT de personas (clientes o proveedores)
-El orden es: Idproveedor/Idcliente, cnif, nombre1, nombre2, domicilio, cp, ciudad, telefono1, telefono2, email, observaciones*/
+/*--Este vector lleva marcado los campos de la tabla que seran campos en el SELECT de personas (clientes o proveedores)
+como si fueran banderas (flags) El orden es: 
+Idproveedor/Idcliente, cnif, nombre1, nombre2, domicilio, cp, ciudad, telefono1, telefono2, email, observaciones--*/
 typedef gboolean tipo_vectorpersona[11];
 
 /*--Revisa si existe el archivo de la Bd en el lugar correspondiente--*/
@@ -84,8 +85,17 @@ void
 MostrarPersonas(gchar *TipoDePersona, 
 			    tipo_vectorpersona vectorpersona);
 
+/*--Procedimiento que muestra los resultados de mostrar personas --*/
 void 
-ImprimirPersonas(tipo_vectorpersona vectorpersona, sqlite3_stmt *res);
+ImprimirPersonas(tipo_vectorpersona vectorpersona, 
+				sqlite3_stmt *res);
+
+/*--Procedimiento que muestra los resultados de mostrar personas el numero maximo (maxresultxpag) por pagina 
+y pulsar ENTER para ver mAs --*/
+void 
+ImprimirPersonasV2(tipo_vectorpersona vectorpersona, 
+					sqlite3_stmt *res,
+					guint maxresultxpag);
 
 /*--Procedimiento que solicita los datos para la persona a buscar --*/
 void 

@@ -336,7 +336,83 @@ InterpretarVectorPersona (GString *consulta,
  		} 
  		g_string_append (consulta, NOMBRE1);
  	}
-	
+ 	 	if (vectorpersona[3] == TRUE) {
+		for (int a= 0; a < 3; a++) {
+			if (vectorpersona[a] == TRUE) {
+				g_string_append (consulta, ",");
+				break;
+			}
+		}
+ 		g_string_append (consulta, NOMBRE2);			
+	}
+
+ 	if (vectorpersona[4] == TRUE) {
+		for (int a= 0; a < 4; a++) {
+			if (vectorpersona[a] == TRUE) {
+				g_string_append (consulta, ",");
+				break;
+			}
+		}
+ 		g_string_append (consulta, DOMICILIO);
+	} 	
+ 	if (vectorpersona[5] == TRUE) {
+		for (int a= 0; a < 5; a++) {
+			if (vectorpersona[a] == TRUE) {
+				g_string_append (consulta, ",");
+				break;
+			}
+		}
+ 		g_string_append (consulta, CP);
+ 	}
+ 	if (vectorpersona[6] == TRUE) {
+		for (int a= 0; a < 6; a++) {
+			if (vectorpersona[a] == TRUE) {
+				g_string_append (consulta, ",");
+				break;
+			}
+		}
+ 		g_string_append (consulta, CIUDAD);
+ 	}
+ 	if (vectorpersona[7] == TRUE) {
+		for (int a= 0; a < 7; a++) {
+			if (vectorpersona[a] == TRUE) {
+				g_string_append (consulta, ",");
+				break;
+			}
+		}
+ 		g_string_append (consulta, TELEFONO1);
+ 	}
+
+ 	if (vectorpersona[8] == TRUE) {
+		for (int a= 0; a < 8; a++) {
+			if (vectorpersona[a] == TRUE) {
+				g_string_append (consulta, ",");
+				break;
+			}
+		}
+ 		g_string_append (consulta, TELEFONO2);
+ 	}
+
+ 	if (vectorpersona[9] == TRUE) {
+		for (int a= 0; a < 9; a++) {
+			if (vectorpersona[a] == TRUE) {
+				g_string_append (consulta, ",");
+				break;
+			}
+		}
+ 		g_string_append (consulta, EMAIL);
+ 	}
+
+ 	if (vectorpersona[10] == TRUE) {
+		for (int a= 0; a < 10; a++) {
+			if (vectorpersona[a] == TRUE) {
+				g_string_append (consulta, ",");
+				break;
+			}
+		}
+ 		g_string_append (consulta, OBSERVACIONES);
+ 	}
+	/*
  	if (vectorpersona[3] == TRUE) {
  		if (vectorpersona[2] == TRUE || vectorpersona[1] == TRUE || 
  			vectorpersona[0] == TRUE ) {
@@ -412,6 +488,7 @@ InterpretarVectorPersona (GString *consulta,
  		} 
  		g_string_append (consulta, OBSERVACIONES);
  	}
+	*/
 
 	g_string_append (consulta, " FROM ");
 	g_string_append (consulta, TipoDePersona);
@@ -419,8 +496,11 @@ InterpretarVectorPersona (GString *consulta,
 
 	//**
 }
+
 void 
-ImprimirPersonas(tipo_vectorpersona vectorpersona, sqlite3_stmt *res) {
+ImprimirPersonas(tipo_vectorpersona vectorpersona, 
+				sqlite3_stmt *res) 
+{
 
     guint maxcamp = 0; //usada para definir la maxima posicion de los "campos a mostrar"
     guint b = 0; //un indice para la hora de "mostrar los campos"
@@ -442,6 +522,40 @@ ImprimirPersonas(tipo_vectorpersona vectorpersona, sqlite3_stmt *res) {
         	break;       		
     		}
     	}	
+		g_printf("\n");
+	} 
+}
+
+void 
+ImprimirPersonasV2(tipo_vectorpersona vectorpersona, 
+				sqlite3_stmt *res,
+				guint maxresultxpag) 
+{
+
+    guint maxcamp = 0; //usada para definir la maxima posicion de los "campos a mostrar"
+    guint b = 0; //un indice para la hora de "mostrar los campos"
+    guint c = 0;
+	/*Comprobamos el numero maximo de campos a mostrar (maxcamp)*/
+    for (int a=0; a < 11; a++) {
+    	if (vectorpersona[a] == TRUE) {
+    		maxcamp++;
+    	} 
+    }
+    while ((sqlite3_step (res) == SQLITE_ROW) && (c < maxresultxpag)) {
+    	c++;
+    	for (int a=0 ; a < 11; a++) {
+        	if (vectorpersona[a] == TRUE) {
+        		b = 0;
+        		while(b < maxcamp) {
+        			g_printf(" %s ", sqlite3_column_text(res, b));
+        			b++;
+        		} 
+        	break;       		
+    	
+    		}
+
+    	}
+
 		g_printf("\n");
 	} 
 }
@@ -487,8 +601,10 @@ MostrarPersonas(gchar *TipoDePersona,
         sqlite3_close(db);
         //  return 1;
     } 
-
-    ImprimirPersonas(vectorpersona, res);
+    /*
+    ImprimirPersonasV2(vectorpersona, res, 2);
+	*/
+	ImprimirPersonas(vectorpersona, res);
 
     sqlite3_finalize(res);
     sqlite3_close(db);
@@ -502,14 +618,12 @@ PreguntarBuscarPersonas(gchar *TipoDePersona)
 {
 	gchar *tipoDeNombre1;
 	gchar *tipoDeNombre2;
-
 	gchar *tecla;
 
 	/*Variables usadas para la recogida de valores*/
 	gchar *cadenaabuscar ;
 	gchar *campobusqueda;
 	/**/
-
 	tipo_vectorpersona vectorpersona;
 	tipoDeNombre1 = g_malloc(17);
 	tipoDeNombre2 = g_malloc(14);
@@ -679,7 +793,7 @@ void MostrarBuscarPersonas(gchar *TipoDePersona,
         sqlite3_close(db);
         //  return 1;
     } 
-
+    /*Imprimimos las personaS*/
     ImprimirPersonas(vectorpersona, res);
 
     sqlite3_finalize(res);
@@ -688,3 +802,4 @@ void MostrarBuscarPersonas(gchar *TipoDePersona,
 	g_string_free(consulta, TRUE);
 	//cnif, nombre1, nombre2, domicilio, cp, ciudad, telefono1, telefono2, email, observaciones
 }
+

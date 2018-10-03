@@ -412,89 +412,9 @@ InterpretarVectorPersona (GString *consulta,
 		}
  		g_string_append (consulta, OBSERVACIONES);
  	}
-	/*
- 	if (vectorpersona[3] == TRUE) {
- 		if (vectorpersona[2] == TRUE || vectorpersona[1] == TRUE || 
- 			vectorpersona[0] == TRUE ) {
- 				g_string_append (consulta, ",");	
- 		} 
- 		g_string_append (consulta, NOMBRE2);
- 	}
-
- 	if (vectorpersona[4] == TRUE) {
- 		if (vectorpersona[3] == TRUE || vectorpersona[2] == TRUE || 
- 			vectorpersona[1] == TRUE || vectorpersona[0] == TRUE ) {
- 				g_string_append (consulta, ",");	
- 		} 
- 		g_string_append (consulta, DOMICILIO);
- 	}
-
- 	if (vectorpersona[5] == TRUE) {
- 		if (vectorpersona[4] == TRUE || vectorpersona[3] == TRUE ||
- 		 	vectorpersona[2] == TRUE || vectorpersona[1] == TRUE || 
- 		 	vectorpersona[0] == TRUE ) {
- 				g_string_append (consulta, ",");	
- 		} 
- 		g_string_append (consulta, CP);
- 	}
-
- 	if (vectorpersona[6] == TRUE) {
- 		if (vectorpersona[5] == TRUE || vectorpersona[4] == TRUE || 
- 			vectorpersona[3] == TRUE || vectorpersona[2] == TRUE || 
- 			vectorpersona[1] == TRUE || vectorpersona[0] == TRUE ) {
- 				g_string_append (consulta, ",");	
- 		} 
- 		g_string_append (consulta, CIUDAD);
- 	}
-
- 	if (vectorpersona[7] == TRUE) {
- 		if (vectorpersona[6] == TRUE || vectorpersona[5] == TRUE || 
- 			vectorpersona[4] == TRUE || vectorpersona[3] == TRUE || 
- 			vectorpersona[2] == TRUE || vectorpersona[1] == TRUE || 
- 			vectorpersona[0] == TRUE ) {
- 				g_string_append (consulta, ",");	
- 		} 
- 		g_string_append (consulta, TELEFONO1);
- 	}
-
- 	if (vectorpersona[8] == TRUE) {
- 		if (vectorpersona[7] == TRUE || vectorpersona[6] == TRUE || 
- 			vectorpersona[5] == TRUE || vectorpersona[4] == TRUE ||
- 			vectorpersona[3] == TRUE || vectorpersona[2] == TRUE ||
- 			vectorpersona[1] == TRUE || vectorpersona[0] == TRUE ) {
- 				g_string_append (consulta, ",");	
- 		} 
- 		g_string_append (consulta, TELEFONO2);
- 	}
-
- 	if (vectorpersona[9] == TRUE) {
- 		if (vectorpersona[8] == TRUE || 
- 			vectorpersona[7] == TRUE || vectorpersona[6] == TRUE || 
- 			vectorpersona[5] == TRUE || vectorpersona[4] == TRUE || 
- 			vectorpersona[3] == TRUE || vectorpersona[2] == TRUE || 
- 			vectorpersona[1] == TRUE || vectorpersona[0] == TRUE ) {
- 				g_string_append (consulta, ",");	
- 		} 
- 		g_string_append (consulta, EMAIL);
- 	}
-
- 	if (vectorpersona[10] == TRUE) {
- 		if (vectorpersona[9] == TRUE || vectorpersona[8] == TRUE || 
- 			vectorpersona[7] == TRUE || vectorpersona[6] == TRUE || 
- 			vectorpersona[5] == TRUE || vectorpersona[4] == TRUE || 
- 			vectorpersona[3] == TRUE || vectorpersona[2] == TRUE || 
- 			vectorpersona[1] == TRUE || vectorpersona[0] == TRUE ) {
- 				g_string_append (consulta, ",");	
- 		} 
- 		g_string_append (consulta, OBSERVACIONES);
- 	}
-	*/
-
 	g_string_append (consulta, " FROM ");
 	g_string_append (consulta, TipoDePersona);
 
-
-	//**
 }
 
 void 
@@ -531,17 +451,19 @@ ImprimirPersonasV2(tipo_vectorpersona vectorpersona,
 				sqlite3_stmt *res,
 				guint maxresultxpag) 
 {
-
+	gchar *tecla; 
     guint maxcamp = 0; //usada para definir la maxima posicion de los "campos a mostrar"
     guint b = 0; //un indice para la hora de "mostrar los campos"
     guint c = 0;
+    tecla = g_malloc(3);
 	/*Comprobamos el numero maximo de campos a mostrar (maxcamp)*/
     for (int a=0; a < 11; a++) {
     	if (vectorpersona[a] == TRUE) {
     		maxcamp++;
     	} 
     }
-    while ((sqlite3_step (res) == SQLITE_ROW) && (c < maxresultxpag)) {
+
+   	while (sqlite3_step (res) == SQLITE_ROW)  {
     	c++;
     	for (int a=0 ; a < 11; a++) {
         	if (vectorpersona[a] == TRUE) {
@@ -550,14 +472,21 @@ ImprimirPersonasV2(tipo_vectorpersona vectorpersona,
         			g_printf(" %s ", sqlite3_column_text(res, b));
         			b++;
         		} 
-        	break;       		
-    	
+        	break; 	
     		}
-
     	}
-
 		g_printf("\n");
+
+		if ( c == maxresultxpag)  {
+			c = 0;
+			g_printf("Pulse una tecla para ver los siguientes %d resultados\n",maxresultxpag);
+			fgets(tecla, 4, stdin);
+        	//g_printf("\033c");	
+
+		}
+
 	} 
+	g_free(tecla);
 }
 
 void 
@@ -602,9 +531,9 @@ MostrarPersonas(gchar *TipoDePersona,
         //  return 1;
     } 
     /*
-    ImprimirPersonasV2(vectorpersona, res, 2);
+    ImprimirPersonas(vectorpersona, res);
 	*/
-	ImprimirPersonas(vectorpersona, res);
+	ImprimirPersonasV2(vectorpersona, res, 10); //en este caso mostrarA 10 resultados por "pAgina"
 
     sqlite3_finalize(res);
     sqlite3_close(db);
@@ -632,7 +561,7 @@ PreguntarBuscarPersonas(gchar *TipoDePersona)
 	cadenaabuscar = g_malloc(100);
 	campobusqueda = g_malloc(100);
 
-	/*TODO--------SE-REPITE--------------------------------*/
+	/*--------SE-REPITE--------------------------------*/
 	if (( g_strcmp0 (TipoDePersona, "PROVEEDOR")) == 0) {
 			g_stpcpy(tipoDeNombre1, "Nombre comercial");
 			g_stpcpy(tipoDeNombre2,"Nombre fiscal");
